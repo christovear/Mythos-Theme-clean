@@ -7,6 +7,32 @@
 
 (function() {
     'use strict';
+
+    function initThemeToggle() {
+        const toggle = document.querySelector('.theme-toggle');
+        if (!toggle) return;
+
+        const root = document.documentElement;
+        const themeColor = document.getElementById('theme-color');
+
+        function updateToggle() {
+            const isDark = root.getAttribute('data-theme') === 'dark';
+            const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+            toggle.setAttribute('aria-pressed', String(isDark));
+            toggle.setAttribute('aria-label', label);
+            toggle.setAttribute('title', label);
+            if (themeColor) themeColor.setAttribute('content', isDark ? '#111517' : '#ffffff');
+        }
+
+        toggle.addEventListener('click', function() {
+            const nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', nextTheme);
+            try { localStorage.setItem('site-theme', nextTheme); } catch (error) {}
+            updateToggle();
+        });
+
+        updateToggle();
+    }
     
     // Mobile menu toggle functionality
     function initMobileMenu() {
@@ -215,6 +241,7 @@
     
     // Initialize all functionality when DOM is ready
     function init() {
+        initThemeToggle();
         initMobileMenu();
         initCodeCopy();
         initCopyLinkButtons();

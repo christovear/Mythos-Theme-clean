@@ -4,6 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Mythos Theme v1.4.14">
+    <meta id="theme-color" name="theme-color" content="#ffffff">
+    <script>
+      (function () {
+        var theme;
+        try { theme = localStorage.getItem('site-theme'); } catch (error) {}
+        if (theme !== 'dark' && theme !== 'light') {
+          theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-color').setAttribute('content', theme === 'dark' ? '#111517' : '#ffffff');
+      })();
+    </script>
     
     <!-- Meta tags and title -->
     <meta name="twitter:card" content="summary">

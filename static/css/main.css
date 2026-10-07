@@ -85,97 +85,74 @@
     --transition-slow: 0.3s ease;
 }
 
-/* ===== DARK MODE =====
- * Automatically activates when user's device is set to dark mode.
- * These colors override the light mode colors above.
- * Tip: Customize these colors to create your perfect dark mode experience. */
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* DARK MODE COLORS
-         * Note: These use softer colors than pure black/white for better eye comfort */
-        --color-text: #e5e5e5;
-        --color-text-light: #cccccc;
-        --color-text-muted: #999999;
-        --color-background: #1a1a1a;
-        --color-background-alt: #2a2a2a;
-        --color-border: #404040;
-        --color-border-light: #333333;
-        --color-link: #aaaaaa;
-        --color-link-hover: #e5e5e5;
-        --color-accent: #888888;
-    }
-    
-    /* SPECIAL CONTENT BLOCKS in Dark Mode
-     * These override the light mode versions for better dark mode contrast */
-    /* Blue informational blocks */
-    p.note {
-        background-color: #1a2533;
-        border-color: #2d4a5c;
-        border-left-color: #4a90cc;
-        color: #b3d7f0;
-    }
-    
-    /* Yellow warning blocks */
-    p.alert {
-        background-color: #332914;
-        border-color: #5c4a1a;
-        border-left-color: #cc9944;
-        color: #f0d9a3;
-    }
-    
-    /* Gray sidebar-style blocks */
-    p.aside {
-        background-color: #2a2a2a;
-        border-color: #404040;
-        border-left-color: #777777;
-        color: #cccccc;
-    }
-    
-    p.lead {
-        color: #cccccc;
-    }
-    
-    /* IMAGES in Dark Mode
-     * Add subtle border so images stand out from dark background */
-    img {
-        border: 1px solid var(--color-border-light);
-    }
-    
-    img.vintage {
-        border-color: #3a3a36;
-        background-color: #2a2a26;
-        box-shadow: 
-            0 2px 8px rgba(0, 0, 0, 0.3),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-            0 0 0 1px #404036;
-    }
-    
-    /* CODE BLOCKS in Dark Mode 
-     * Dark theme for code and syntax highlighting */
-    /* Inline code */
-    code {
-        background-color: #2d2d2d;
-        border-color: var(--color-border);
-        color: #e5e5e5;
-    }
-    
-    /* Code blocks */
-    pre {
-        background-color: #2d2d2d;
-        border-color: var(--color-border);
-        color: #e5e5e5;
-    }
-    
-    /* HIGHLIGHT element in Dark Mode */
-    highlight, mark {
-        background-color: #4a4a00;
-        color: #ffffff;
-    }
-    
-    /* Fixes issue with Archive by Months plugin in Dark Mode */
-    .archive_years select {
-       color: #000;
-    }
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+/* Noir's injected root colors from the supplied page. The darker secondary
+ * surface and intermediate text colors are derived for this theme's components. */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-text: #e8e6e3;
+    --color-text-light: #d0cbc4;
+    --color-text-muted: #bab4ab;
+    --color-background: #111517;
+    --color-background-alt: #1d2427;
+    --color-border: #6b6358;
+    --color-border-light: #4c5e66;
+    --color-link: #3391ff;
+    --color-link-hover: #80baff;
+    --color-accent: #3391ff;
+}
+
+:root[data-theme="dark"] ::selection {
+    background-color: #004daa;
+    color: #e8e6e3;
+}
+
+:root[data-theme="dark"] p.note {
+    background-color: #1a2533;
+    border-color: #2d4a5c;
+    border-left-color: #3391ff;
+    color: #e8e6e3;
+}
+
+:root[data-theme="dark"] p.alert {
+    background-color: #332914;
+    border-color: #6b6358;
+    border-left-color: #cccc00;
+    color: #e8e6e3;
+}
+
+:root[data-theme="dark"] p.aside {
+    background-color: var(--color-background-alt);
+    border-color: var(--color-border);
+    border-left-color: var(--color-border-light);
+    color: var(--color-text);
+}
+
+:root[data-theme="dark"] img.vintage {
+    border-color: #6b6358;
+    background-color: #1d2427;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 0 0 1px #4c5e66;
+}
+
+:root[data-theme="dark"] code,
+:root[data-theme="dark"] pre {
+    background-color: var(--color-background-alt);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+:root[data-theme="dark"] pre code {
+    background: none;
+    border: 0;
+}
+
+:root[data-theme="dark"] highlight,
+:root[data-theme="dark"] mark {
+    background-color: #cccc00;
+    color: #111517;
 }
 
 /* ===== SMOOTH TRANSITIONS =====
@@ -682,6 +659,7 @@ blockquote.verse cite {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    min-width: 0;
 }
 
 
@@ -715,6 +693,39 @@ blockquote.verse cite {
 
 .site-title a:hover {
     color: var(--color-link);
+}
+
+.header-container > .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 var(--touch-target-height);
+    width: var(--touch-target-height);
+    height: var(--touch-target-height);
+    min-height: var(--touch-target-height);
+    margin-left: var(--spacing-sm);
+    padding: 0;
+    color: var(--color-text);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.header-container > .theme-toggle:hover {
+    color: var(--color-link);
+    background-color: var(--color-background-alt);
+}
+
+.header-container > .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.theme-toggle svg {
+    display: block;
+    width: 20px;
+    height: 20px;
 }
 
 
