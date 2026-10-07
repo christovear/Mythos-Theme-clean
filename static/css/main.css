@@ -714,7 +714,12 @@ blockquote.verse cite {
 
 .header-container > .theme-toggle:hover {
     color: var(--color-link);
-    background-color: var(--color-background-alt);
+    background: transparent;
+    transform: none;
+}
+
+.header-container > .theme-toggle:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .header-container > .theme-toggle:focus-visible {
