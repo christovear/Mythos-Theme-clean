@@ -992,8 +992,6 @@ blockquote.verse cite {
     
     /* Pagination mobile adjustments */
     .pagination {
-        flex-direction: row;
-        justify-content: space-between;
         gap: var(--spacing-sm);
         text-align: center;
     }
@@ -1317,13 +1315,27 @@ blockquote.verse cite {
 
 /* Pagination */
 .pagination {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     margin-top: var(--spacing-2xl);
     padding-top: var(--spacing-xl);
-    flex-wrap: wrap;
     gap: var(--spacing-md);
+}
+
+.prev-page {
+    grid-column: 1;
+    justify-self: start;
+}
+
+.page-numbers {
+    grid-column: 2;
+    justify-self: center;
+}
+
+.next-page {
+    grid-column: 3;
+    justify-self: end;
 }
 
 .prev-page,
