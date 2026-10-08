@@ -1,15 +1,13 @@
-<form class="page-numbers pagination-jump" data-first-url="{{ .First.URL }}" aria-label="Jump to a blog page">
+{{ $currentPage := .PageNumber }}
+<form class="page-numbers pagination-jump" aria-label="Jump to a blog page">
     <label for="page-jump-{{ .PageNumber }}">{{ T "Page" }}</label>
-    <input
+    <select
         class="pagination-jump-input"
         id="page-jump-{{ .PageNumber }}"
-        type="number"
-        inputmode="numeric"
-        min="1"
-        max="{{ .TotalPages }}"
-        step="1"
-        value="{{ .PageNumber }}"
-        aria-label="Page number, from 1 to {{ .TotalPages }}">
+        aria-label="Choose a page; currently page {{ .PageNumber }} of {{ .TotalPages }}">
+        {{ range .Pagers }}
+        <option value="{{ .URL }}"{{ if eq .PageNumber $currentPage }} selected{{ end }}>{{ .PageNumber }}</option>
+        {{ end }}
+    </select>
     <span>{{ T "Of" }} {{ .TotalPages }}</span>
-    <button class="pagination-jump-submit" type="submit">Go</button>
 </form>
