@@ -1324,8 +1324,8 @@ blockquote.verse cite {
 }
 
 .prev-page {
-    grid-column: 1;
-    justify-self: start;
+    grid-column: 3;
+    justify-self: end;
 }
 
 .page-numbers {
@@ -1334,8 +1334,8 @@ blockquote.verse cite {
 }
 
 .next-page {
-    grid-column: 3;
-    justify-self: end;
+    grid-column: 1;
+    justify-self: start;
 }
 
 .prev-page,
