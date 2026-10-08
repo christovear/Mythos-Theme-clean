@@ -10,4 +10,12 @@
         {{ end }}
     </select>
     <span>{{ T "Of" }} {{ .TotalPages }}</span>
+    <button class="pagination-jump-submit" type="submit">{{ T "Go" }}</button>
 </form>
+<noscript>
+    <span class="pagination-fallback" aria-label="Blog pages">
+        {{ range .Pagers }}
+        <a href="{{ .URL }}"{{ if eq .PageNumber $currentPage }} aria-current="page"{{ end }}>{{ .PageNumber }}</a>
+        {{ end }}
+    </span>
+</noscript>

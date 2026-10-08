@@ -26,9 +26,7 @@
                             {{ .Date | time.Format ":date_long" }}
                         </time>
                     </a>
-                    {{ if .Site.Author.name }}
-                    <span class="p-author" style="display: none;">{{ .Site.Author.name }}</span>
-                    {{ end }}
+                    <span class="p-author" style="display: none;">{{ .Site.Params.author.name | default .Site.Title }}</span>
                 </div>
             </header>
 

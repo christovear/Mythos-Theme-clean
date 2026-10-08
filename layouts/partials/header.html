@@ -1,14 +1,13 @@
 <header class="site-header">
+    {{ $siteAvatar := .Site.Params.custom_avatar | default .Site.Params.author.avatar }}
     <div class="header-container h-card">
         <div class="site-branding">
             <div class="site-info">
                 <h1 class="site-title">
                     <a href="/" class="u-url" rel="home">
                         {{ if not .Site.Params.hide_profile_photo }}
-                            {{ if .Site.Params.custom_avatar }}
-                            <img src="{{ .Site.Params.custom_avatar }}" alt="{{ .Site.Title }} logo" class="title-avatar u-photo" width="32" height="32">
-                            {{ else if .Site.Author.avatar }}
-                            <img src="{{ .Site.Author.avatar }}" alt="{{ .Site.Title }} logo" class="title-avatar u-photo" width="32" height="32">
+                            {{ with $siteAvatar }}
+                            <img src="{{ . }}" alt="{{ $.Site.Title }} logo" class="title-avatar u-photo" width="32" height="32">
                             {{ end }}
                         {{ end }}
                         <span class="p-name">{{ .Site.Title }}</span>

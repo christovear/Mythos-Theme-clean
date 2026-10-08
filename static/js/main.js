@@ -132,22 +132,21 @@
         const codeBlocks = document.querySelectorAll('pre');
         
         codeBlocks.forEach(function(pre) {
+            const code = pre.querySelector('code');
+            const copyText = (code || pre).textContent;
             const button = document.createElement('button');
             button.className = 'code-copy-button';
             button.textContent = 'Copy';
             button.setAttribute('aria-label', 'Copy code to clipboard');
             
             button.addEventListener('click', async function() {
-                const code = pre.querySelector('code') || pre;
-                const text = code.textContent;
-                
                 try {
                     if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
+                        await navigator.clipboard.writeText(copyText);
                         showCopiedFeedback(button);
                     } else {
                         const textArea = document.createElement('textarea');
-                        textArea.value = text;
+                        textArea.value = copyText;
                         textArea.style.position = 'fixed';
                         textArea.style.left = '-999999px';
                         textArea.style.top = '-999999px';

@@ -28,19 +28,17 @@
     {{ end }}
     {{ if .IsHome }}
       <meta name="twitter:description" content="{{ .Site.Params.itunes_description | truncate 160 }}">
-      <meta name="og:description" content="{{ .Site.Params.itunes_description | truncate 160 }}">
+      <meta property="og:description" content="{{ .Site.Params.itunes_description | truncate 160 }}">
       <meta name="description" content="{{ .Site.Params.itunes_description }}">
       <!-- Use avatar as social media image for home page -->
-      {{ if .Site.Params.custom_avatar }}
-        <meta name="twitter:image" content="{{ .Site.Params.custom_avatar }}">
-        <meta property="og:image" content="{{ .Site.Params.custom_avatar }}">
-      {{ else }}
-        <meta name="twitter:image" content="{{ .Site.Author.avatar }}">
-        <meta property="og:image" content="{{ .Site.Author.avatar }}">
+      {{ $siteAvatar := .Site.Params.custom_avatar | default .Site.Params.author.avatar }}
+      {{ with $siteAvatar }}
+        <meta name="twitter:image" content="{{ . | absURL }}">
+        <meta property="og:image" content="{{ . | absURL }}">
       {{ end }}
     {{ else }}
       <meta name="twitter:description" content="{{ .Summary | truncate 60 }}">
-      <meta name="og:description" content="{{ .Summary | truncate 60 }}">
+      <meta property="og:description" content="{{ .Summary | truncate 60 }}">
       <meta name="description" content="{{ .Summary }}">
       {{ $postImages := .Params.images | default .Params.photos }}
       {{ with $postImages }}
@@ -182,6 +180,19 @@
         outline-offset: 2px;
       }
 
+      .main-content .pagination-jump-submit {
+        min-height: 2em;
+        padding: 0.15em 0.5em;
+        font: inherit;
+      }
+
+      .main-content .pagination-fallback {
+        display: inline-flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5em;
+      }
+
       @media (max-width: 480px) {
         .main-content .pagination {
           grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -231,7 +242,8 @@
           var select = form.querySelector('.pagination-jump-input');
           if (!select) return;
 
-          select.addEventListener('change', function () {
+          form.addEventListener('submit', function (event) {
+            event.preventDefault();
             if (select.value) window.location.assign(select.value);
           });
         });
