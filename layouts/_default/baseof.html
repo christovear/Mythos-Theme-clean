@@ -117,8 +117,9 @@
         border: 0 !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        color: var(--color-link);
+        color: var(--color-text) !important;
         text-decoration: underline;
+        text-decoration-color: var(--color-border);
         text-underline-offset: 0.25em;
         transform: none !important;
       }
@@ -130,7 +131,8 @@
 
       .main-content .pagination .next-page:hover,
       .main-content .pagination .prev-page:hover {
-        color: var(--color-link-hover);
+        color: var(--color-text) !important;
+        text-decoration-color: var(--color-link);
         text-decoration-thickness: 2px;
       }
 
@@ -160,10 +162,11 @@
       }
 
       .main-content .pagination-jump-input {
-        width: 4.25em;
+        width: 3.5em;
+        min-width: 0;
         min-height: 2em;
         margin: 0;
-        padding: 0.15em 0.25em;
+        padding: 0.15em;
         border: 1px solid var(--color-border);
         border-radius: 3px;
         background: var(--color-background);
