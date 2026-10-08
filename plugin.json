@@ -10,12 +10,6 @@
       "placeholder": "Enter the language code (e.g., en, fr, es)"
     },
     {
-      "field": "params.posts_per_page",
-      "label": "Posts per Page",
-      "type": "number",
-      "placeholder": "Enter the number of posts per page (default: 10)"
-    },
-    {
       "field": "params.custom_head_html",
       "label": "Custom Head HTML",
       "type": "string",

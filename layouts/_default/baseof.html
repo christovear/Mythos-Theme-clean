@@ -141,6 +141,8 @@
 
       .main-content .pagination .page-numbers {
         position: absolute;
+        grid-column: auto !important;
+        grid-row: auto !important;
         left: 50%;
         bottom: 0;
         display: flex;
@@ -161,7 +163,8 @@
 
         .main-content .pagination .page-numbers {
           position: static;
-          grid-area: page;
+          grid-column: 1 / -1 !important;
+          grid-row: 1 !important;
           display: block;
           min-height: 0;
           justify-self: center;

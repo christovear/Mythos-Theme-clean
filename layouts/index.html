@@ -6,7 +6,7 @@
     {{ end }}
 
     <section class="posts-list" aria-label="Blog posts">
-        {{ $paginator := .Paginate (where .Site.Pages.ByDate.Reverse "Type" "post") (or .Site.Params.posts_per_page 10) }}
+        {{ $paginator := .Paginate (where .Site.Pages.ByDate.Reverse "Type" "post") 10 }}
         
         {{ range .Paginator.Pages }}
         <article class="post-item h-entry">
