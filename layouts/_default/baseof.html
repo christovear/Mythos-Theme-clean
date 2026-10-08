@@ -184,29 +184,22 @@
 
       @media (max-width: 480px) {
         .main-content .pagination {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          grid-template-areas:
-            "page page"
-            "older newer";
-          row-gap: var(--spacing-sm);
+          grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+          gap: var(--spacing-sm);
+          align-items: center;
         }
 
         .main-content .pagination .page-numbers {
-          position: static;
-          grid-column: 1 / -1 !important;
-          grid-row: 1 !important;
-          display: flex;
-          min-height: 0;
-          justify-self: center;
-          transform: none;
+          font-size: var(--font-size-xs);
         }
 
-        .main-content .pagination .next-page {
-          grid-area: older;
-        }
-
+        .main-content .pagination .next-page,
         .main-content .pagination .prev-page {
-          grid-area: newer;
+          font-size: var(--font-size-xs);
+        }
+
+        .main-content .pagination-jump {
+          gap: 0.25em;
         }
       }
     </style>
