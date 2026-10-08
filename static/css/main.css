@@ -1343,30 +1343,55 @@ blockquote.verse cite {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: 0;
     min-height: 44px;
-    background-color: var(--color-background-alt);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-small);
-    text-decoration: none;
-    color: var(--color-text-muted);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
+    color: var(--color-link);
     font-weight: 600;
     font-size: var(--font-size-small);
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast);
     white-space: nowrap;
 }
 
 .prev-page:hover,
 .next-page:hover {
-    color: var(--color-text);
-    border-color: var(--color-accent);
-    transform: translateY(-1px);
+    color: var(--color-link-hover);
+    text-decoration-thickness: 2px;
+    transform: none;
 }
 
 .page-numbers {
     font-size: var(--font-size-small);
     color: var(--color-text-muted);
     font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .pagination {
+        grid-template-areas:
+            "page page"
+            "older newer";
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        row-gap: var(--spacing-sm);
+        column-gap: var(--spacing-lg);
+    }
+
+    .page-numbers {
+        grid-area: page;
+    }
+
+    .next-page {
+        grid-area: older;
+    }
+
+    .prev-page {
+        grid-area: newer;
+    }
 }
 
 /* Footer */
@@ -1408,7 +1433,6 @@ hr {
 button, .button, input[type="submit"], input[type="button"],
 .post-actions a, .post-actions button,
 .archive-categories .category-button,
-.prev-page, .next-page,
 .post-categories .category-button,
 .share-link-button, .copy-link-button {
     display: inline-flex;
@@ -1440,7 +1464,6 @@ button, .button, input[type="submit"], input[type="button"],
 button:hover, .button:hover, input[type="submit"]:hover, input[type="button"]:hover,
 .post-actions a:hover, .post-actions button:hover,
 .archive-categories .category-button:hover,
-.prev-page:hover, .next-page:hover,
 .post-categories .category-button:hover,
 .share-link-button:hover, .copy-link-button:hover,
 .microblog_reply_button input[type="submit"]:hover:not(:disabled) {
