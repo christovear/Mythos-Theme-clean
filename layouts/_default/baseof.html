@@ -95,6 +95,88 @@
     {{ if .Site.Params.custom_head_html }}
     {{ .Site.Params.custom_head_html | safeHTML }}
     {{ end }}
+
+    {{/* Keep pagination critical styles here because Micro.blog can retain an older cached main.css. */}}
+    <style>
+      .main-content .pagination {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: end;
+        min-height: 44px;
+      }
+
+      .main-content .pagination .next-page,
+      .main-content .pagination .prev-page,
+      .main-content .pagination .next-page:hover,
+      .main-content .pagination .prev-page:hover {
+        min-height: 44px;
+        padding: 0 !important;
+        background: transparent !important;
+        background-image: none !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        color: var(--color-link);
+        text-decoration: underline;
+        text-underline-offset: 0.25em;
+        transform: none !important;
+      }
+
+      .main-content .pagination .next-page {
+        grid-column: 1;
+        justify-self: start;
+      }
+
+      .main-content .pagination .next-page:hover,
+      .main-content .pagination .prev-page:hover {
+        color: var(--color-link-hover);
+        text-decoration-thickness: 2px;
+      }
+
+      .main-content .pagination .prev-page {
+        grid-column: 3;
+        justify-self: end;
+      }
+
+      .main-content .pagination .page-numbers {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+
+      @media (max-width: 480px) {
+        .main-content .pagination {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          grid-template-areas:
+            "page page"
+            "older newer";
+          row-gap: var(--spacing-sm);
+        }
+
+        .main-content .pagination .page-numbers {
+          position: static;
+          grid-area: page;
+          display: block;
+          min-height: 0;
+          justify-self: center;
+          transform: none;
+        }
+
+        .main-content .pagination .next-page {
+          grid-area: older;
+        }
+
+        .main-content .pagination .prev-page {
+          grid-area: newer;
+        }
+      }
+    </style>
 </head>
 
 <body class="no-js">
