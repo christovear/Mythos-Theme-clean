@@ -28,10 +28,8 @@
     {{ if and .Params.categories (not .Site.Params.show_categories) }}
     <div class="post-categories">
         <div class="category-list">
-            {{ range .Params.categories }}
-            {{ $categoryName := . }}
-            {{ $categoryTaxonomy := index $.Site.Taxonomies.categories ($categoryName | urlize) }}
-            <a href="/categories/{{ . | urlize }}" class="category-button p-category">{{ . }} ({{ len $categoryTaxonomy.Pages }})</a>
+            {{ range .GetTerms "categories" }}
+            <a href="{{ .RelPermalink }}" class="category-button p-category">{{ .LinkTitle }} ({{ len .Pages }})</a>
             {{ end }}
         </div>
     </div>

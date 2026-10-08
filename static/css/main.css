@@ -534,8 +534,15 @@ pre {
     z-index: 10;
 }
 
-pre:hover .code-copy-button {
+pre:hover .code-copy-button,
+pre:focus-within .code-copy-button {
     opacity: 1;
+}
+
+@media (hover: none) {
+    .code-copy-button {
+        opacity: 1;
+    }
 }
 
 .code-copy-button:hover {

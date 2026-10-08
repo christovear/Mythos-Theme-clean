@@ -155,7 +155,9 @@
                         textArea.select();
                         
                         try {
-                            document.execCommand('copy');
+                            if (!document.execCommand('copy')) {
+                                throw new Error('Copy command was rejected');
+                            }
                             showCopiedFeedback(button);
                         } catch (err) {
                             console.error('Failed to copy code:', err);
@@ -210,7 +212,9 @@
                         textArea.select();
                         
                         try {
-                            document.execCommand('copy');
+                            if (!document.execCommand('copy')) {
+                                throw new Error('Copy command was rejected');
+                            }
                             showCopiedFeedback(copyButton, copiedText);
                         } catch (err) {
                             console.error('Failed to copy link:', err);

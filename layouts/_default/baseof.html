@@ -180,12 +180,6 @@
         outline-offset: 2px;
       }
 
-      .main-content .pagination-jump-submit {
-        min-height: 2em;
-        padding: 0.15em 0.5em;
-        font: inherit;
-      }
-
       .main-content .pagination-fallback {
         display: inline-flex;
         flex-wrap: wrap;
@@ -242,8 +236,7 @@
           var select = form.querySelector('.pagination-jump-input');
           if (!select) return;
 
-          form.addEventListener('submit', function (event) {
-            event.preventDefault();
+          select.addEventListener('change', function () {
             if (select.value) window.location.assign(select.value);
           });
         });

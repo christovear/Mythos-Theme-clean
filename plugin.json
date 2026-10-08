@@ -53,6 +53,11 @@
       "type": "boolean"
     },
     {
+      "field": "params.include_conversation",
+      "label": "Include Conversation on Posts",
+      "type": "boolean"
+    },
+    {
       "field": "params.hide_footer_credits",
       "label": "Hide Footer Credits",
       "type": "boolean"
@@ -68,168 +73,6 @@
       "type": "string",
       "placeholder": "@username@mastodon.social",
       "description": "Your fediverse handle for journalist byline highlighting (used by Mastodon, Threads, etc.)"
-    },
-    {
-      "field": "params.social_microblog",
-      "label": "Micro.blog URL",
-      "type": "string",
-      "placeholder": "https://micro.blog/username"
-    },
-    {
-      "field": "params.social_mastodon",
-      "label": "Mastodon URL",
-      "type": "string",
-      "placeholder": "https://mastodon.social/@username"
-    },
-    {
-      "field": "params.social_x",
-      "label": "X (Twitter) URL",
-      "type": "string",
-      "placeholder": "https://x.com/username"
-    },
-    {
-      "field": "params.social_instagram",
-      "label": "Instagram URL",
-      "type": "string",
-      "placeholder": "https://instagram.com/username"
-    },
-    {
-      "field": "params.social_facebook",
-      "label": "Facebook URL",
-      "type": "string",
-      "placeholder": "https://facebook.com/username"
-    },
-    {
-      "field": "params.social_tiktok",
-      "label": "TikTok URL",
-      "type": "string",
-      "placeholder": "https://tiktok.com/@username"
-    },
-    {
-      "field": "params.social_bluesky",
-      "label": "Bluesky URL",
-      "type": "string",
-      "placeholder": "https://bsky.app/profile/username"
-    },
-    {
-      "field": "params.social_nostr",
-      "label": "Nostr URL",
-      "type": "string",
-      "placeholder": "https://nostr.com/your_npub or vanity url"
-    },
-    {
-      "field": "params.social_medium",
-      "label": "Medium URL",
-      "type": "string",
-      "placeholder": "https://medium.com/@username"
-    },
-    {
-      "field": "params.social_threads",
-      "label": "Threads URL",
-      "type": "string",
-      "placeholder": "https://threads.net/@username"
-    },
-    {
-      "field": "params.social_pinterest",
-      "label": "Pinterest URL",
-      "type": "string",
-      "placeholder": "https://pinterest.com/username"
-    },
-    {
-      "field": "params.social_youtube",
-      "label": "YouTube URL",
-      "type": "string",
-      "placeholder": "https://youtube.com/@username"
-    },
-    {
-      "field": "params.social_linkedin",
-      "label": "LinkedIn URL",
-      "type": "string",
-      "placeholder": "https://linkedin.com/in/username"
-    },
-    {
-      "field": "params.social_snapchat",
-      "label": "Snapchat URL",
-      "type": "string",
-      "placeholder": "https://snapchat.com/add/username"
-    },
-    {
-      "field": "params.social_tumblr",
-      "label": "Tumblr URL",
-      "type": "string",
-      "placeholder": "https://username.tumblr.com"
-    },
-    {
-      "field": "params.social_flickr",
-      "label": "Flickr URL",
-      "type": "string",
-      "placeholder": "https://flickr.com/photos/username"
-    },
-    {
-      "field": "params.social_github",
-      "label": "GitHub URL",
-      "type": "string",
-      "placeholder": "https://github.com/username"
-    },
-    {
-      "field": "params.social_gitlab",
-      "label": "GitLab URL",
-      "type": "string",
-      "placeholder": "https://gitlab.com/username"
-    },
-    {
-      "field": "params.social_reddit",
-      "label": "Reddit URL",
-      "type": "string",
-      "placeholder": "https://reddit.com/u/username"
-    },
-    {
-      "field": "params.social_discord",
-      "label": "Discord Server URL",
-      "type": "string",
-      "placeholder": "https://discord.gg/servercode"
-    },
-    {
-      "field": "params.social_amazon",
-      "label": "Amazon URL",
-      "type": "string",
-      "placeholder": "https://amazon.com/author/username"
-    },
-    {
-      "field": "params.social_patreon",
-      "label": "Patreon URL",
-      "type": "string",
-      "placeholder": "https://patreon.com/username"
-    },
-    {
-      "field": "params.social_buymeacoffee",
-      "label": "Buy Me a Coffee URL",
-      "type": "string",
-      "placeholder": "https://buymeacoffee.com/username"
-    },
-    {
-      "field": "params.social_kofi",
-      "label": "Ko-fi URL",
-      "type": "string",
-      "placeholder": "https://ko-fi.com/username"
-    },
-    {
-      "field": "params.social_paypal",
-      "label": "PayPal URL",
-      "type": "string",
-      "placeholder": "https://paypal.me/username"
-    },
-    {
-      "field": "params.social_donate",
-      "label": "Donate/Support URL",
-      "type": "string",
-      "placeholder": "https://example.com/donate"
-    },
-    {
-      "field": "params.social_contact",
-      "label": "Contact Form URL",
-      "type": "string",
-      "placeholder": "https://example.com/contact"
     }
   ]
 }
