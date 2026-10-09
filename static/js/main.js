@@ -8,6 +8,32 @@
 (function() {
     'use strict';
 
+    async function copyToClipboard(text, onCopied) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            onCopied();
+            return;
+        }
+
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            if (!document.execCommand('copy')) {
+                throw new Error('Copy command was rejected');
+            }
+            onCopied();
+        } finally {
+            textArea.remove();
+        }
+    }
+
     function initThemeToggle() {
         const toggle = document.querySelector('.theme-toggle');
         if (!toggle) return;
@@ -141,30 +167,9 @@
             
             button.addEventListener('click', async function() {
                 try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(copyText);
+                    await copyToClipboard(copyText, function() {
                         showCopiedFeedback(button);
-                    } else {
-                        const textArea = document.createElement('textarea');
-                        textArea.value = copyText;
-                        textArea.style.position = 'fixed';
-                        textArea.style.left = '-999999px';
-                        textArea.style.top = '-999999px';
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-                        
-                        try {
-                            if (!document.execCommand('copy')) {
-                                throw new Error('Copy command was rejected');
-                            }
-                            showCopiedFeedback(button);
-                        } catch (err) {
-                            console.error('Failed to copy code:', err);
-                        } finally {
-                            textArea.remove();
-                        }
-                    }
+                    });
                 } catch (err) {
                     console.error('Failed to copy code:', err);
                 }
@@ -196,32 +201,9 @@
             
             copyButton.addEventListener('click', async function() {
                 try {
-                    // Try modern clipboard API first
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(url);
+                    await copyToClipboard(url, function() {
                         showCopiedFeedback(copyButton, copiedText);
-                    } else {
-                        // Fallback for older browsers or non-HTTPS
-                        const textArea = document.createElement('textarea');
-                        textArea.value = url;
-                        textArea.style.position = 'fixed';
-                        textArea.style.left = '-999999px';
-                        textArea.style.top = '-999999px';
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-                        
-                        try {
-                            if (!document.execCommand('copy')) {
-                                throw new Error('Copy command was rejected');
-                            }
-                            showCopiedFeedback(copyButton, copiedText);
-                        } catch (err) {
-                            console.error('Failed to copy link:', err);
-                        } finally {
-                            textArea.remove();
-                        }
-                    }
+                    });
                 } catch (err) {
                     console.error('Failed to copy link:', err);
                 }
