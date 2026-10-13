@@ -352,17 +352,23 @@
             if (event.target === modal || event.target.classList.contains('photo-focus-stage')) close();
         });
 
-        modal.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
+        document.addEventListener('keydown', function(event) {
+            if (modal.hidden) return;
+
+            const isPreviousKey = event.key === 'ArrowLeft' || event.key === 'Left' || event.keyCode === 37;
+            const isNextKey = event.key === 'ArrowRight' || event.key === 'Right' || event.keyCode === 39;
+
+            if (event.key === 'Escape' || event.key === 'Esc') {
+                event.preventDefault();
                 close();
                 return;
             }
-            if (event.key === 'ArrowLeft') {
+            if (isPreviousKey && group.length > 1) {
                 event.preventDefault();
                 previous();
                 return;
             }
-            if (event.key === 'ArrowRight') {
+            if (isNextKey && group.length > 1) {
                 event.preventDefault();
                 next();
                 return;
@@ -381,7 +387,7 @@
                     firstControl.focus();
                 }
             }
-        });
+        }, true);
 
         modal.addEventListener('touchstart', function(event) {
             const touch = event.changedTouches[0];
