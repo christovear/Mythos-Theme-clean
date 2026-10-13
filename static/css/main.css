@@ -2089,14 +2089,18 @@ body.photo-focus-open {
     display: none;
 }
 
+.photo-focus-previous[hidden],
+.photo-focus-next[hidden] {
+    display: none;
+}
+
 .photo-focus {
     position: fixed;
     inset: 0;
     z-index: 10000;
-    display: grid;
-    grid-template-columns: minmax(3.5rem, 1fr) minmax(0, auto) minmax(3.5rem, 1fr);
-    grid-template-rows: minmax(0, 1fr);
+    display: flex;
     align-items: center;
+    justify-content: center;
     background: rgba(5, 7, 8, 0.96);
     color: #ffffff;
     overscroll-behavior: contain;
@@ -2105,8 +2109,6 @@ body.photo-focus-open {
 }
 
 .photo-focus-stage {
-    grid-column: 1 / -1;
-    grid-row: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2148,13 +2150,35 @@ body.photo-focus-open {
     cursor: pointer;
 }
 
+.photo-focus-close svg,
+.photo-focus-previous svg,
+.photo-focus-next svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
 .photo-focus-close:hover,
 .photo-focus-previous:hover,
 .photo-focus-next:hover {
     background: rgba(255, 255, 255, 0.16);
     border: 0;
     color: #ffffff;
+}
+
+.photo-focus-close:hover {
     transform: none;
+}
+
+.photo-focus-previous:hover,
+.photo-focus-next:hover {
+    transform: translateY(-50%);
 }
 
 .photo-focus-close:focus-visible,
@@ -2168,21 +2192,20 @@ body.photo-focus-open {
     position: absolute;
     top: max(0.75rem, env(safe-area-inset-top));
     right: max(0.75rem, env(safe-area-inset-right));
-    font-size: 2rem;
 }
 
 .photo-focus-previous {
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: center;
-    font-size: 2.5rem;
+    position: absolute;
+    top: 50%;
+    left: max(0.75rem, env(safe-area-inset-left));
+    transform: translateY(-50%);
 }
 
 .photo-focus-next {
-    grid-column: 3;
-    grid-row: 1;
-    justify-self: center;
-    font-size: 2.5rem;
+    position: absolute;
+    top: 50%;
+    right: max(0.75rem, env(safe-area-inset-right));
+    transform: translateY(-50%);
 }
 
 .photo-focus-status {
@@ -2203,18 +2226,20 @@ body.photo-focus-open {
 }
 
 @media (max-width: 600px) {
-    .photo-focus {
-        grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
-        align-items: end;
-    }
-
     .photo-focus-stage {
         padding: 4rem 0.75rem 5.5rem;
     }
 
     .photo-focus-previous,
     .photo-focus-next {
-        margin-bottom: max(0.75rem, env(safe-area-inset-bottom));
+        top: auto;
+        bottom: max(0.75rem, env(safe-area-inset-bottom));
+        transform: none;
+    }
+
+    .photo-focus-previous:hover,
+    .photo-focus-next:hover {
+        transform: none;
     }
 }
 

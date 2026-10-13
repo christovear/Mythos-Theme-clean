@@ -230,10 +230,12 @@
         const allImages = Array.from(document.querySelectorAll(imageSelector));
         const imageLinkPattern = /\.(?:avif|gif|jpe?g|png|webp)(?:[?#].*)?$/i;
 
-        function getPhotoItem(image) {
+        function getPhotoItem(image, domIndex) {
             if (image.classList.contains('no-photo-focus') || image.dataset.photoFocus === 'off') return null;
 
             const link = image.closest('a[href]');
+            const post = image.closest('.post-item, .post');
+            const publishedTime = post && post.querySelector('time[datetime]');
             const isCollectionImage = Boolean(image.closest('.microblog_collection, .photos-grid-container'));
             const hasExplicitSource = Boolean(image.dataset.photoFocusSrc);
             const opensAnImage = link && imageLinkPattern.test(link.href);
@@ -243,11 +245,19 @@
 
             return {
                 image: image,
-                trigger: link || image
+                trigger: link || image,
+                domIndex: domIndex,
+                publishedAt: publishedTime ? Date.parse(publishedTime.getAttribute('datetime')) : NaN
             };
         }
 
         const photoItems = allImages.map(getPhotoItem).filter(Boolean);
+        photoItems.sort(function(first, second) {
+            if (Number.isFinite(first.publishedAt) && Number.isFinite(second.publishedAt) && first.publishedAt !== second.publishedAt) {
+                return first.publishedAt - second.publishedAt;
+            }
+            return first.domIndex - second.domIndex;
+        });
         if (!photoItems.length) return;
 
         const modal = document.createElement('div');
@@ -257,12 +267,18 @@
         modal.setAttribute('aria-modal', 'true');
         modal.setAttribute('aria-label', 'Photo viewer');
         modal.innerHTML = [
-            '<button class="photo-focus-close" type="button" aria-label="Close photo viewer">&times;</button>',
-            '<button class="photo-focus-previous" type="button" aria-label="View previous photo">&#8249;</button>',
+            '<button class="photo-focus-close" type="button" aria-label="Close photo viewer">',
+                '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"></path></svg>',
+            '</button>',
+            '<button class="photo-focus-previous" type="button" aria-label="View previous photo">',
+                '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"></path></svg>',
+            '</button>',
             '<div class="photo-focus-stage">',
                 '<img class="photo-focus-image" alt="">',
             '</div>',
-            '<button class="photo-focus-next" type="button" aria-label="View next photo">&#8250;</button>',
+            '<button class="photo-focus-next" type="button" aria-label="View next photo">',
+                '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>',
+            '</button>',
             '<span class="photo-focus-status" aria-live="polite"></span>'
         ].join('');
         document.body.appendChild(modal);
@@ -279,16 +295,8 @@
         let touchStartY = 0;
         let backgroundState = [];
 
-        function getGroup(item) {
-            const image = item.image;
-            const collection = image.closest('.microblog_collection, .photos-grid-container');
-            const container = collection || image.closest('.post-item, .post') || image.parentElement;
-            return photoItems.filter(function(candidate) {
-                const candidateImage = candidate.image;
-                const candidateCollection = candidateImage.closest('.microblog_collection, .photos-grid-container');
-                const candidateContainer = candidateCollection || candidateImage.closest('.post-item, .post') || candidateImage.parentElement;
-                return candidateContainer === container;
-            });
+        function getGroup() {
+            return photoItems;
         }
 
         function getSource(image) {
@@ -302,14 +310,14 @@
 
         function show(index) {
             if (!group.length) return;
-            currentIndex = (index + group.length) % group.length;
+            currentIndex = Math.max(0, Math.min(index, group.length - 1));
             const sourceImage = group[currentIndex].image;
             viewerImage.src = getSource(sourceImage);
             viewerImage.alt = sourceImage.alt || '';
 
             const hasMultiple = group.length > 1;
-            previousButton.hidden = !hasMultiple;
-            nextButton.hidden = !hasMultiple;
+            previousButton.hidden = !hasMultiple || currentIndex === 0;
+            nextButton.hidden = !hasMultiple || currentIndex === group.length - 1;
             status.textContent = hasMultiple ? 'Photo ' + (currentIndex + 1) + ' of ' + group.length : '';
         }
 
@@ -334,7 +342,7 @@
         }
 
         function open(item) {
-            group = getGroup(item);
+            group = getGroup();
             previouslyFocused = document.activeElement;
             modal.hidden = false;
             document.body.classList.add('photo-focus-open');
@@ -353,11 +361,11 @@
         }
 
         function previous() {
-            show(currentIndex - 1);
+            if (currentIndex > 0) show(currentIndex - 1);
         }
 
         function next() {
-            show(currentIndex + 1);
+            if (currentIndex < group.length - 1) show(currentIndex + 1);
         }
 
         const registeredTriggers = new Set();
@@ -411,12 +419,12 @@
                 close();
                 return;
             }
-            if (isPreviousKey && group.length > 1) {
+            if (isPreviousKey && currentIndex > 0) {
                 event.preventDefault();
                 previous();
                 return;
             }
-            if (isNextKey && group.length > 1) {
+            if (isNextKey && currentIndex < group.length - 1) {
                 event.preventDefault();
                 next();
                 return;
