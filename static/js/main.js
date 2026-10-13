@@ -246,6 +246,7 @@
             return {
                 image: image,
                 trigger: link || image,
+                post: post,
                 domIndex: domIndex,
                 publishedAt: publishedTime ? Date.parse(publishedTime.getAttribute('datetime')) : NaN
             };
@@ -256,6 +257,9 @@
             if (Number.isFinite(first.publishedAt) && Number.isFinite(second.publishedAt) && first.publishedAt !== second.publishedAt) {
                 return first.publishedAt - second.publishedAt;
             }
+            // The backward sequence enters each post at its first photo, then
+            // continues through the remaining photos before the next older post.
+            if (first.post && first.post === second.post) return second.domIndex - first.domIndex;
             return first.domIndex - second.domIndex;
         });
         if (!photoItems.length) return;
@@ -388,8 +392,10 @@
 
             trigger.addEventListener('click', function(event) {
                 event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
                 open(item);
-            });
+            }, true);
 
             trigger.addEventListener('keydown', function(event) {
                 const shouldOpen = event.key === ' ' || (trigger === image && event.key === 'Enter');
