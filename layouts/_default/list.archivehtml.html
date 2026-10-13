@@ -26,7 +26,7 @@
         <h2>{{ T "AllPosts" }}</h2>
     </div>
     
-    {{ $allPosts := where .Site.Pages.ByDate.Reverse "Type" "post" }}
+    {{ $allPosts := where .Site.RegularPages.ByDate.Reverse "Type" "post" }}
     {{ if $allPosts }}
     <section class="archive-posts-list" aria-label="All blog posts">
         {{ range $allPosts }}

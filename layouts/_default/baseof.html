@@ -18,7 +18,7 @@
     </script>
     
     <!-- Meta tags and title -->
-    <meta name="twitter:card" content="{{ if and .IsPage (or .Params.images .Params.photos) }}summary_large_image{{ else }}summary{{ end }}">
+    <meta name="twitter:card" content="{{ if and .IsPage (or .Params.images .Params.photos .Params.opengraph.image) }}summary_large_image{{ else }}summary{{ end }}">
     {{- with .Title -}}
       <meta name="twitter:title" content="{{ . }}">
       <meta property="og:title" content="{{ . }}">
@@ -195,12 +195,22 @@
         }
 
         .main-content .pagination .page-numbers {
+          position: static;
+          grid-column: 2 !important;
+          grid-row: 1 !important;
+          left: auto;
+          bottom: auto;
           font-size: var(--font-size-xs);
+          justify-self: center;
+          transform: none;
         }
 
         .main-content .pagination .next-page,
         .main-content .pagination .prev-page {
+          grid-row: 1 !important;
           font-size: var(--font-size-xs);
+          text-align: center;
+          white-space: normal;
         }
 
         .main-content .pagination-jump {
