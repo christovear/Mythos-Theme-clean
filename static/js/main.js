@@ -223,6 +223,182 @@
             }, 2000);
         }
     }
+
+    // Accessible, caption-free photo viewer for post and collection images
+    function initPhotoFocus() {
+        const imageSelector = '.post-content img, .microblog_collection img, .photos-grid-container img';
+        const allImages = Array.from(document.querySelectorAll(imageSelector));
+        const imageLinkPattern = /\.(?:avif|gif|jpe?g|png|webp)(?:[?#].*)?$/i;
+
+        function isEligible(image) {
+            if (image.classList.contains('no-photo-focus') || image.dataset.photoFocus === 'off') return false;
+
+            const link = image.closest('a[href]');
+            return !link || imageLinkPattern.test(link.href);
+        }
+
+        const images = allImages.filter(isEligible);
+        if (!images.length) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'photo-focus';
+        modal.hidden = true;
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-label', 'Photo viewer');
+        modal.innerHTML = [
+            '<button class="photo-focus-close" type="button" aria-label="Close photo viewer">&times;</button>',
+            '<button class="photo-focus-previous" type="button" aria-label="View previous photo">&#8249;</button>',
+            '<div class="photo-focus-stage">',
+                '<img class="photo-focus-image" alt="">',
+            '</div>',
+            '<button class="photo-focus-next" type="button" aria-label="View next photo">&#8250;</button>',
+            '<span class="photo-focus-status" aria-live="polite"></span>'
+        ].join('');
+        document.body.appendChild(modal);
+
+        const viewerImage = modal.querySelector('.photo-focus-image');
+        const closeButton = modal.querySelector('.photo-focus-close');
+        const previousButton = modal.querySelector('.photo-focus-previous');
+        const nextButton = modal.querySelector('.photo-focus-next');
+        const status = modal.querySelector('.photo-focus-status');
+        let group = [];
+        let currentIndex = 0;
+        let previouslyFocused = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function getGroup(image) {
+            const collection = image.closest('.microblog_collection, .photos-grid-container');
+            const container = collection || image.closest('.post-item, .post') || image.parentElement;
+            return images.filter(function(candidate) {
+                const candidateCollection = candidate.closest('.microblog_collection, .photos-grid-container');
+                const candidateContainer = candidateCollection || candidate.closest('.post-item, .post') || candidate.parentElement;
+                return candidateContainer === container;
+            });
+        }
+
+        function getSource(image) {
+            const imageLink = image.closest('a[href]');
+            if (image.dataset.photoFocusSrc) return image.dataset.photoFocusSrc;
+            if (imageLink && imageLinkPattern.test(imageLink.href)) return imageLink.href;
+            return image.currentSrc || image.src;
+        }
+
+        function show(index) {
+            if (!group.length) return;
+            currentIndex = (index + group.length) % group.length;
+            const sourceImage = group[currentIndex];
+            viewerImage.src = getSource(sourceImage);
+            viewerImage.alt = sourceImage.alt || '';
+
+            const hasMultiple = group.length > 1;
+            previousButton.hidden = !hasMultiple;
+            nextButton.hidden = !hasMultiple;
+            status.textContent = hasMultiple ? 'Photo ' + (currentIndex + 1) + ' of ' + group.length : '';
+        }
+
+        function open(image) {
+            group = getGroup(image);
+            previouslyFocused = document.activeElement;
+            modal.hidden = false;
+            document.body.classList.add('photo-focus-open');
+            show(group.indexOf(image));
+            closeButton.focus();
+        }
+
+        function close() {
+            if (modal.hidden) return;
+            modal.hidden = true;
+            viewerImage.removeAttribute('src');
+            document.body.classList.remove('photo-focus-open');
+            if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
+        }
+
+        function previous() {
+            show(currentIndex - 1);
+        }
+
+        function next() {
+            show(currentIndex + 1);
+        }
+
+        images.forEach(function(image) {
+            const description = image.alt ? ': ' + image.alt : '';
+            image.classList.add('photo-focus-trigger');
+            image.setAttribute('tabindex', '0');
+            image.setAttribute('role', 'button');
+            image.setAttribute('aria-haspopup', 'dialog');
+            image.setAttribute('aria-label', 'View photo' + description);
+
+            image.addEventListener('click', function(event) {
+                event.preventDefault();
+                open(image);
+            });
+
+            image.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    open(image);
+                }
+            });
+        });
+
+        closeButton.addEventListener('click', close);
+        previousButton.addEventListener('click', previous);
+        nextButton.addEventListener('click', next);
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal || event.target.classList.contains('photo-focus-stage')) close();
+        });
+
+        modal.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                close();
+                return;
+            }
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                previous();
+                return;
+            }
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                next();
+                return;
+            }
+            if (event.key === 'Tab') {
+                const controls = [closeButton, previousButton, nextButton].filter(function(control) {
+                    return !control.hidden;
+                });
+                const firstControl = controls[0];
+                const lastControl = controls[controls.length - 1];
+                if (event.shiftKey && document.activeElement === firstControl) {
+                    event.preventDefault();
+                    lastControl.focus();
+                } else if (!event.shiftKey && document.activeElement === lastControl) {
+                    event.preventDefault();
+                    firstControl.focus();
+                }
+            }
+        });
+
+        modal.addEventListener('touchstart', function(event) {
+            const touch = event.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: true });
+
+        modal.addEventListener('touchend', function(event) {
+            if (group.length < 2) return;
+            const touch = event.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+            if (deltaX > 0) previous();
+            else next();
+        }, { passive: true });
+    }
     
     // Initialize all functionality when DOM is ready
     function init() {
@@ -230,6 +406,7 @@
         initMobileMenu();
         initCodeCopy();
         initCopyLinkButtons();
+        initPhotoFocus();
     }
     
     // Run initialization

@@ -2070,3 +2070,156 @@ details:last-of-type {
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
 }
+
+/* ===== PHOTO FOCUS MODE ===== */
+.photo-focus-trigger {
+    cursor: zoom-in !important;
+}
+
+.photo-focus-trigger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+body.photo-focus-open {
+    overflow: hidden;
+}
+
+.photo-focus[hidden] {
+    display: none;
+}
+
+.photo-focus {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    grid-template-columns: minmax(3.5rem, 1fr) minmax(0, auto) minmax(3.5rem, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    background: rgba(5, 7, 8, 0.96);
+    color: #ffffff;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    animation: photo-focus-fade-in var(--transition-base);
+}
+
+.photo-focus-stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 3.5rem 4.75rem;
+}
+
+.photo-focus-image {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    margin: 0;
+    border-radius: 0;
+    object-fit: contain;
+    box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.35);
+}
+
+.photo-focus-close,
+.photo-focus-previous,
+.photo-focus-next {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-family: var(--font-family-base);
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.photo-focus-close:hover,
+.photo-focus-previous:hover,
+.photo-focus-next:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border: 0;
+    color: #ffffff;
+    transform: none;
+}
+
+.photo-focus-close:focus-visible,
+.photo-focus-previous:focus-visible,
+.photo-focus-next:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+.photo-focus-close {
+    position: absolute;
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
+    font-size: 2rem;
+}
+
+.photo-focus-previous {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    font-size: 2.5rem;
+}
+
+.photo-focus-next {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: center;
+    font-size: 2.5rem;
+}
+
+.photo-focus-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@keyframes photo-focus-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    .photo-focus {
+        grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+        align-items: end;
+    }
+
+    .photo-focus-stage {
+        padding: 4rem 0.75rem 5.5rem;
+    }
+
+    .photo-focus-previous,
+    .photo-focus-next {
+        margin-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .photo-focus {
+        animation: none;
+    }
+}
