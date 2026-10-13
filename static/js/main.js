@@ -230,15 +230,25 @@
         const allImages = Array.from(document.querySelectorAll(imageSelector));
         const imageLinkPattern = /\.(?:avif|gif|jpe?g|png|webp)(?:[?#].*)?$/i;
 
-        function isEligible(image) {
-            if (image.classList.contains('no-photo-focus') || image.dataset.photoFocus === 'off') return false;
+        function getPhotoItem(image) {
+            if (image.classList.contains('no-photo-focus') || image.dataset.photoFocus === 'off') return null;
 
             const link = image.closest('a[href]');
-            return !link || imageLinkPattern.test(link.href);
+            const isCollectionImage = Boolean(image.closest('.microblog_collection, .photos-grid-container'));
+            const hasExplicitSource = Boolean(image.dataset.photoFocusSrc);
+            const opensAnImage = link && imageLinkPattern.test(link.href);
+
+            // Preserve ordinary linked-image behavior outside photo collections.
+            if (link && !isCollectionImage && !hasExplicitSource && !opensAnImage) return null;
+
+            return {
+                image: image,
+                trigger: link || image
+            };
         }
 
-        const images = allImages.filter(isEligible);
-        if (!images.length) return;
+        const photoItems = allImages.map(getPhotoItem).filter(Boolean);
+        if (!photoItems.length) return;
 
         const modal = document.createElement('div');
         modal.className = 'photo-focus';
@@ -267,13 +277,16 @@
         let previouslyFocused = null;
         let touchStartX = 0;
         let touchStartY = 0;
+        let backgroundState = [];
 
-        function getGroup(image) {
+        function getGroup(item) {
+            const image = item.image;
             const collection = image.closest('.microblog_collection, .photos-grid-container');
             const container = collection || image.closest('.post-item, .post') || image.parentElement;
-            return images.filter(function(candidate) {
-                const candidateCollection = candidate.closest('.microblog_collection, .photos-grid-container');
-                const candidateContainer = candidateCollection || candidate.closest('.post-item, .post') || candidate.parentElement;
+            return photoItems.filter(function(candidate) {
+                const candidateImage = candidate.image;
+                const candidateCollection = candidateImage.closest('.microblog_collection, .photos-grid-container');
+                const candidateContainer = candidateCollection || candidateImage.closest('.post-item, .post') || candidateImage.parentElement;
                 return candidateContainer === container;
             });
         }
@@ -281,14 +294,16 @@
         function getSource(image) {
             const imageLink = image.closest('a[href]');
             if (image.dataset.photoFocusSrc) return image.dataset.photoFocusSrc;
-            if (imageLink && imageLinkPattern.test(imageLink.href)) return imageLink.href;
+            if (imageLink && (imageLinkPattern.test(imageLink.href) || image.closest('.microblog_collection, .photos-grid-container'))) {
+                return imageLink.href;
+            }
             return image.currentSrc || image.src;
         }
 
         function show(index) {
             if (!group.length) return;
             currentIndex = (index + group.length) % group.length;
-            const sourceImage = group[currentIndex];
+            const sourceImage = group[currentIndex].image;
             viewerImage.src = getSource(sourceImage);
             viewerImage.alt = sourceImage.alt || '';
 
@@ -298,12 +313,33 @@
             status.textContent = hasMultiple ? 'Photo ' + (currentIndex + 1) + ' of ' + group.length : '';
         }
 
-        function open(image) {
-            group = getGroup(image);
+        function setBackgroundInert(isInert) {
+            if (!('inert' in HTMLElement.prototype)) return;
+
+            if (isInert) {
+                backgroundState = Array.from(document.body.children).filter(function(element) {
+                    return element !== modal;
+                }).map(function(element) {
+                    const state = { element: element, wasInert: element.inert };
+                    element.inert = true;
+                    return state;
+                });
+                return;
+            }
+
+            backgroundState.forEach(function(state) {
+                state.element.inert = state.wasInert;
+            });
+            backgroundState = [];
+        }
+
+        function open(item) {
+            group = getGroup(item);
             previouslyFocused = document.activeElement;
             modal.hidden = false;
             document.body.classList.add('photo-focus-open');
-            show(group.indexOf(image));
+            setBackgroundInert(true);
+            show(group.indexOf(item));
             closeButton.focus();
         }
 
@@ -312,6 +348,7 @@
             modal.hidden = true;
             viewerImage.removeAttribute('src');
             document.body.classList.remove('photo-focus-open');
+            setBackgroundInert(false);
             if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
         }
 
@@ -323,23 +360,34 @@
             show(currentIndex + 1);
         }
 
-        images.forEach(function(image) {
-            const description = image.alt ? ': ' + image.alt : '';
-            image.classList.add('photo-focus-trigger');
-            image.setAttribute('tabindex', '0');
-            image.setAttribute('role', 'button');
-            image.setAttribute('aria-haspopup', 'dialog');
-            image.setAttribute('aria-label', 'View photo' + description);
+        const registeredTriggers = new Set();
 
-            image.addEventListener('click', function(event) {
+        photoItems.forEach(function(item) {
+            const image = item.image;
+            const trigger = item.trigger;
+            if (registeredTriggers.has(trigger)) return;
+            registeredTriggers.add(trigger);
+
+            const description = image.alt ? ': ' + image.alt : '';
+            trigger.classList.add('photo-focus-trigger');
+            trigger.setAttribute('aria-haspopup', 'dialog');
+            if (!trigger.getAttribute('aria-label')) trigger.setAttribute('aria-label', 'View photo' + description);
+
+            if (trigger === image) {
+                trigger.setAttribute('tabindex', '0');
+                trigger.setAttribute('role', 'button');
+            }
+
+            trigger.addEventListener('click', function(event) {
                 event.preventDefault();
-                open(image);
+                open(item);
             });
 
-            image.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' || event.key === ' ') {
+            trigger.addEventListener('keydown', function(event) {
+                const shouldOpen = event.key === ' ' || (trigger === image && event.key === 'Enter');
+                if (shouldOpen) {
                     event.preventDefault();
-                    open(image);
+                    open(item);
                 }
             });
         });
